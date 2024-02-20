@@ -1,0 +1,19 @@
+docker-compose.yml
+-> Environments
+--> SMB_USER & SMB_PASSWORD & SMB_NAME
+
+entrypoint.sh
+
+Dockerfile**
+apt update &&\
+apt install -y samba &&\
+apt autoclean && apt autoremove
+mkdir /share
+=====================================
+sed 's/{SMB_NAME}/${SMB_NAME}/' /etc/samba/smb.conf
+sed 's/{SMB_USER}/${SMB_USER}/' /etc/samba/smb.conf
+groupadd -g ${PGID} ${SMB_USER}
+adduser --gecos "" --uid ${PUID} --gid ${PGID} --disabled-password ${SMB_USER}
+chown -R ${SMB_USER}:${SMB_USER} /share
+
+sed -e "s/{SMB_NAME}/${SMB_NAME}/" -e "s/{SMB_USER}/${SMB_USER}/" /etc/samba/smb.tmpl > /etc/samba/smb.conf
